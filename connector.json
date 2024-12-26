@@ -1,0 +1,43 @@
+{
+  "name": "cdc-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "plugin.name": "pgoutput",
+    "tasks.max": "1",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname": "db_local",
+    "database.server.name": "postgres",
+    "table.include.list": "public.posts",
+    "schema.include.list": "public",
+    "topic.prefix": "postgres",
+    "topic.creation.enable": "true",
+    "topic.creation.default.replication.factor": "1",
+    "topic.creation.default.partitions": "2",
+    "topic.creation.default.cleanup.policy": "delete",
+    "topic.creation.default.retention.ms": "604800000",
+    "tombstones.on.delete" : "false",
+
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": false,
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": false,
+
+    "predicates": "topicPostMatch",
+    "predicates.topicPostMatch.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+    "predicates.topicPostMatch.pattern": "dev.postgresql.content.bein_stream.posts",
+
+    "transforms": "extractPostId",
+    "transforms.extractPostId.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.extractPostId.field": "id",
+    "transforms.extractPostId.predicate": "topicPostMatch",
+
+    "slot.name": "debezium_dev_cdc",
+    "publication.name": "dbz_dev_cdc_publication",
+    "publication.autocreate.mode": "filtered"
+
+
+  }
+}
